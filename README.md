@@ -22,7 +22,7 @@ Given the Header X-API-Key and the body of the request being a JSON with the fol
 It will return a JSON with the following format:
 ```json
 {
-  "link": "https://example.com?forcedownload=0",
+  "modified_link": "https://example.com?forcedownload=0",
 }
 ```
 
