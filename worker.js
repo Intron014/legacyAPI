@@ -30,7 +30,8 @@ addEventListener('fetch', event => {
         })
       }
     } else {
-      return new Response('Not Found', { status: 404 })
-    }
+        const redirectTo = 'https://example.com'; 
+        return fetch(redirectTo, request);
+      }
   }
   
