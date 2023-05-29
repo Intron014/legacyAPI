@@ -3,10 +3,10 @@ addEventListener('fetch', event => {
   })
   
   async function handleRequest(request) {
-    const { pathname } = new URL(request.url)
+    const { pathname, host } = new URL(request.url)
     const apiKey = '<your-api-key>' 
   
-    if (pathname === '/modify-clipboard-link') {
+    if (pathname === '/no-moar-forcedownload') {
       const data = await request.json()
       const requestApiKey = request.headers.get('X-API-Key')
   
@@ -29,9 +29,12 @@ addEventListener('fetch', event => {
           headers: { 'Content-Type': 'application/json' },
         })
       }
-    } else {
-        const redirectTo = 'https://example.com'; 
+    } else if (host === 'mail.intron014.com') {
+        const redirectTo = 'https://mail.icloud.com'; 
+        return fetch(redirectTo, request); 
+    } else if (host === 'api.intron014.com') {
+        const redirectTo = 'https://url.intron014.com/xDLDG';
         return fetch(redirectTo, request);
-      }
+	}
   }
   
