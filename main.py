@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
 import requests
+from Crypto.Cipher import DES
+import binascii
+import base64
 
 app = Flask(__name__)
 
@@ -21,6 +24,10 @@ def get_emt_bicimad():
     jsonArray = [
         {
             'data': [
+                {'name': '451 - Home'},
+                {'name': '436 - UPM'},
+                {'name': '437 - Sierra de Guadalupe'},
+                {'name': '440 - Villa de Vallecas'},
                 {'name': '000 - Other'}
             ]
         }
@@ -34,6 +41,10 @@ def get_emt_bicimad_rel():
     jsonArray = [
         {
             'data': [
+                {'id': '2074', 'bid': '436'},
+                {'id': '2003', 'bid': '437'},
+                {'id': '2053', 'bid': '440'},
+                {'id': '2188', 'bid': '451'}
             ]
         }
     ]
@@ -46,6 +57,13 @@ def get_emt_bus():
     jsonArray = [
         {
             'data': [
+                {'id': '3950', 'name': 'Home'},
+                {'id': '3847', 'name': 'Home Away'},
+                {'id': '5562', 'name': 'UPM Down'},
+                {'id': '3854', 'name': 'Metro Las Suertes'},
+                {'id': '4112', 'name': 'CC La Gavia'},
+                {'id': '2612', 'name': 'UPM Up Up'},
+                {'id': '1027', 'name': 'Sierra de Guadalupe'},
                 {'id': '0000', 'name': 'Others'}
             ]
         }
