@@ -6,6 +6,8 @@ import base64
 
 app = Flask(__name__)
 
+encodedAccessKey = "OGZmNTI3ZjktZjg1Yi00NWVmLWIxYjItYmQ5ZWI1OWUwZmZm"
+encodedBikeKey = "QklLRTIwMTk="
 
 @app.route('/modify-clipboard-link', methods=['POST'])
 def modify_clipboard_link():
@@ -69,6 +71,81 @@ def get_emt_bus():
         }
     ]
     return jsonify(jsonArray)
+
+
+# Route - bicimad-out
+@app.route('/bicimad-gethashcode', methods=['POST'])
+def process_bike_data():
+    data = request.get_json()
+    decoded_access_key, decoded_bike_key = decode_keys()
+
+    first_cipher_str = generate_first_cipher_string(data)
+    second_cipher_str = generate_second_cipher_string(first_cipher_str, decoded_bike_key)
+
+    hash_code, cipher_error = ecb_encrypt_base64(second_cipher_str.encode(), decoded_access_key.encode())
+
+    if cipher_error:
+        app.logger.error(f"Error: {cipher_error}")
+        return "", 500
+
+    app.logger.debug(f"\n- d1: {data['D1']}\n- d2: {data['D2']}\n- bikeNumber: {data['BikeNumber']}\n- docker: {data['Docker']}\n- firstCipherStr: {first_cipher_str}\n- secondCipherStr: {second_cipher_str}\n{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    return hash_code.decode(), 200
+
+def decode_keys():
+    decoded_access_key = base64.b64decode(encodedAccessKey).decode().upper()[:8]
+    decoded_bike_key = base64.b64decode(encodedBikeKey).decode()
+
+    return decoded_access_key, decoded_bike_key
+
+def generate_first_cipher_string(data):
+    resize_coordinates(data['D1'], data['D2'])
+    first_cipher_str = f"{data['BikeNumber']}#{data['Docker']}#{data['D1']}#{data['D2']}#D#{data['DNI']}"
+
+    if len(first_cipher_str) % 8 != 0:
+        length = 8 - (len(first_cipher_str) % 8)
+        first_cipher_str += '#' * length
+
+    return first_cipher_str
+
+def resize_coordinates(d1, d2):
+    app.logger.info(f"Resizing coordinates: {d1}, {d2}")
+    d1 = d1[:10] if len(d1) >= 10 else d1.ljust(10, '0')
+    d2 = d2[:10] if len(d2) >= 10 else d2.ljust(10, '0')
+
+
+def generate_second_cipher_string(first_cipher_str, decoded_bike_key):
+    ciphered_string, cipher_error = ecb_encrypt_hex(first_cipher_str.encode(), decoded_bike_key.encode())
+
+    if cipher_error:
+        app.logger.error(f"Error: {cipher_error}")
+        return "", 500
+
+    second_cipher_str = f"B{ciphered_string}"
+
+    if len(second_cipher_str) % 8 != 0:
+        length = 8 - (len(second_cipher_str) % 8)
+        second_cipher_str += 'Z' * length
+
+    return second_cipher_str
+
+def ecb_encrypt_hex(src, key):
+    try:
+        cipher = DES.new(key, DES.MODE_ECB)
+        encrypted = cipher.encrypt(src)
+        return binascii.hexlify(encrypted).decode().upper(), None
+    except Exception as e:
+        app.logger.error(f"Error: {e}")
+        return None, e
+
+def ecb_encrypt_base64(src, key):
+    try:
+        cipher = DES.new(key, DES.MODE_ECB)
+        encrypted = cipher.encrypt(src)
+        return base64.b64encode(encrypted), None
+    except Exception as e:
+        app.logger.error(f"Error: {e}")
+        return None, e
+
 
 
 if __name__ == '__main__':
