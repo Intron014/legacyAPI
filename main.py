@@ -18,7 +18,7 @@ encodedBikeKey = "QklLRTIwMTk="
 
 @app.route('/')
 def root():
-    return redirect("https://intron014.com/404", code=302)
+    return redirect("https://intron014.com/404api", code=302)
 
 @app.route('/modify-clipboard-link', methods=['POST'])
 def modify_clipboard_link():
