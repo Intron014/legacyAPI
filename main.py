@@ -1,9 +1,17 @@
+import logging
+
 from flask import Flask, jsonify, request
 from Crypto.Cipher import DES
 import binascii
 import base64
 
 app = Flask(__name__)
+
+
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 
 encodedAccessKey = "OGZmNTI3ZjktZjg1Yi00NWVmLWIxYjItYmQ5ZWI1OWUwZmZm"
 encodedBikeKey = "QklLRTIwMTk="
@@ -87,7 +95,7 @@ def process_bike_data():
         app.logger.error(f"Error: {cipher_error}")
         return "", 500
 
-    app.logger.debug(f"\n- d1: {data['D1']}\n- d2: {data['D2']}\n- bikeNumber: {data['BikeNumber']}\n- docker: {data['Docker']}\n- firstCipherStr: {first_cipher_str}\n- secondCipherStr: {second_cipher_str}\n{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    app.logger.info(f"\n- d1: {data['D1']}\n- d2: {data['D2']}\n- bikeNumber: {data['BikeNumber']}\n- docker: {data['Docker']}\n- firstCipherStr: {first_cipher_str}\n- secondCipherStr: {second_cipher_str}\n{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
     return hash_code.decode(), 200
 
 def decode_keys():
