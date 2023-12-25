@@ -145,7 +145,5 @@ def ecb_encrypt_base64(src, key):
         app.logger.error(f"Error: {e}")
         return None, e
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
