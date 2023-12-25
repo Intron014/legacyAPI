@@ -95,7 +95,14 @@ def process_bike_data():
         app.logger.error(f"Error: {cipher_error}")
         return "", 500
 
-    app.logger.info(f"\n- d1: {data['D1']}\n- d2: {data['D2']}\n- bikeNumber: {data['BikeNumber']}\n- docker: {data['Docker']}\n- firstCipherStr: {first_cipher_str}\n- secondCipherStr: {second_cipher_str}\n{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    app.logger.info(f"- d1: {data['D1']}")
+    app.logger.info(f"- d2: {data['D2']}")
+    app.logger.info(f"- bikeNumber: {data['BikeNumber']}")
+    app.logger.info(f"- docker: {data['Docker']}")
+    app.logger.info(f"- firstCipherStr: {first_cipher_str}")
+    app.logger.info(f"- secondCipherStr: {second_cipher_str}")
+    app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
     return hash_code.decode(), 200
 
 def decode_keys():
