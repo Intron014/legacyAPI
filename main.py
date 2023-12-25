@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 from Crypto.Cipher import DES
 import binascii
 import base64
@@ -15,6 +15,10 @@ if __name__ != '__main__':
 
 encodedAccessKey = "OGZmNTI3ZjktZjg1Yi00NWVmLWIxYjItYmQ5ZWI1OWUwZmZm"
 encodedBikeKey = "QklLRTIwMTk="
+
+@app.route('/')
+def root():
+    return redirect("https://intron014.com/404", code=302)
 
 @app.route('/modify-clipboard-link', methods=['POST'])
 def modify_clipboard_link():
