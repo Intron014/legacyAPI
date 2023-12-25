@@ -116,8 +116,8 @@ def decode_keys():
     return decoded_access_key, decoded_bike_key
 
 def generate_first_cipher_string(data):
-    resize_coordinates(data['D1'], data['D2'])
-    first_cipher_str = f"{data['BikeNumber']}#{data['Docker']}#{data['D1']}#{data['D2']}#D#{data['DNI']}"
+    d1, d2 = resize_coordinates(data['D1'], data['D2'])
+    first_cipher_str = f"{data['BikeNumber']}#{data['Docker']}#{d1}#{d2}#D#{data['DNI']}"
 
     if len(first_cipher_str) % 8 != 0:
         length = 8 - (len(first_cipher_str) % 8)
@@ -127,8 +127,9 @@ def generate_first_cipher_string(data):
 
 def resize_coordinates(d1, d2):
     app.logger.info(f"Resizing coordinates: {d1}, {d2}")
-    d1 = d1[:10] if len(d1) >= 10 else d1.ljust(10, '0')
-    d2 = d2[:10] if len(d2) >= 10 else d2.ljust(10, '0')
+    d1 = str(d1)[:10] if len(str(d1)) >= 10 else str(d1).ljust(10, '0')
+    d2 = str(d2)[:10] if len(str(d2)) >= 10 else str(d2).ljust(10, '0')
+    return d1, d2
 
 
 def generate_second_cipher_string(first_cipher_str, decoded_bike_key):
