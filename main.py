@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request
-import requests
 from Crypto.Cipher import DES
 import binascii
 import base64
