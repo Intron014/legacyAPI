@@ -1,38 +1,13 @@
-import logging
-
-from flask import Flask, jsonify, request, redirect
+from flask import jsonify, request, current_app
+from . import bicimad_bp
 from Crypto.Cipher import DES
 import binascii
 import base64
 
-app = Flask(__name__)
-
-
-if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
-
 encodedAccessKey = "OGZmNTI3ZjktZjg1Yi00NWVmLWIxYjItYmQ5ZWI1OWUwZmZm"
 encodedBikeKey = "QklLRTIwMTk="
 
-@app.route('/')
-def root():
-    return redirect("https://intron014.com/404api", code=302)
-
-@app.route('/modify-clipboard-link', methods=['POST'])
-def modify_clipboard_link():
-    data = request.json
-    if 'link' in data:
-        link = data['link']
-        modified_link = link.replace('?forcedownload=1', '?forcedownload=0')
-        return jsonify({'modified_link': modified_link})
-    else:
-        return jsonify({'error': 'Invalid request'}), 400
-
-
-# Route - emt-bicimad
-@app.route('/emt-bicimad', methods=['GET'])
+@bicimad_bp.route('/emt-bicimad', methods=['GET'])
 def get_emt_bicimad():
     jsonArray = [
         {
@@ -47,9 +22,7 @@ def get_emt_bicimad():
     ]
     return jsonify(jsonArray)
 
-
-# Route - emt-bicimad-rel
-@app.route('/emt-bicimad-rel', methods=['GET'])
+@bicimad_bp.route('/emt-bicimad-rel', methods=['GET'])
 def get_emt_bicimad_rel():
     jsonArray = [
         {
@@ -63,9 +36,7 @@ def get_emt_bicimad_rel():
     ]
     return jsonify(jsonArray)
 
-
-# Route - emt-bus
-@app.route('/emt-bus', methods=['GET'])
+@bicimad_bp.route('/emt-bus', methods=['GET'])
 def get_emt_bus():
     jsonArray = [
         {
@@ -83,9 +54,7 @@ def get_emt_bus():
     ]
     return jsonify(jsonArray)
 
-
-# Route - bicimad-out
-@app.route('/bicimad-gethashcode', methods=['POST'])
+@bicimad_bp.route('/bicimad-gethashcode', methods=['POST'])
 def process_bike_data():
     data = request.get_json()
     decoded_access_key, decoded_bike_key = decode_keys()
@@ -96,17 +65,17 @@ def process_bike_data():
     hash_code, cipher_error = ecb_encrypt_base64(second_cipher_str.encode(), decoded_access_key.encode())
 
     if cipher_error:
-        app.logger.error(f"Error: {cipher_error}")
+        current_app.logger.error(f"Error: {cipher_error}")
         return "", 500
 
-    app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
-    app.logger.info(f"- d1: {data['D1']}")
-    app.logger.info(f"- d2: {data['D2']}")
-    app.logger.info(f"- bikeNumber: {data['BikeNumber']}")
-    app.logger.info(f"- docker: {data['Docker']}")
-    app.logger.info(f"- firstCipherStr: {first_cipher_str}")
-    app.logger.info(f"- secondCipherStr: {second_cipher_str}")
-    app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    current_app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    current_app.logger.info(f"- d1: {data['D1']}")
+    current_app.logger.info(f"- d2: {data['D2']}")
+    current_app.logger.info(f"- bikeNumber: {data['BikeNumber']}")
+    current_app.logger.info(f"- docker: {data['Docker']}")
+    current_app.logger.info(f"- firstCipherStr: {first_cipher_str}")
+    current_app.logger.info(f"- secondCipherStr: {second_cipher_str}")
+    current_app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
     return hash_code.decode(), 200
 
 def decode_keys():
@@ -126,17 +95,16 @@ def generate_first_cipher_string(data):
     return first_cipher_str
 
 def resize_coordinates(d1, d2):
-    app.logger.info(f"Resizing coordinates: {d1}, {d2}")
+    current_app.logger.info(f"Resizing coordinates: {d1}, {d2}")
     d1 = str(d1)[:10] if len(str(d1)) >= 10 else str(d1).ljust(10, '0')
     d2 = str(d2)[:10] if len(str(d2)) >= 10 else str(d2).ljust(10, '0')
     return d1, d2
-
 
 def generate_second_cipher_string(first_cipher_str, decoded_bike_key):
     ciphered_string, cipher_error = ecb_encrypt_hex(first_cipher_str.encode(), decoded_bike_key.encode())
 
     if cipher_error:
-        app.logger.error(f"Error: {cipher_error}")
+        current_app.logger.error(f"Error: {cipher_error}")
         return "", 500
 
     second_cipher_str = f"B{ciphered_string}"
@@ -153,7 +121,7 @@ def ecb_encrypt_hex(src, key):
         encrypted = cipher.encrypt(src)
         return binascii.hexlify(encrypted).decode().upper(), None
     except Exception as e:
-        app.logger.error(f"Error: {e}")
+        current_app.logger.error(f"Error: {e}")
         return None, e
 
 def ecb_encrypt_base64(src, key):
@@ -162,8 +130,5 @@ def ecb_encrypt_base64(src, key):
         encrypted = cipher.encrypt(src)
         return base64.b64encode(encrypted), None
     except Exception as e:
-        app.logger.error(f"Error: {e}")
+        current_app.logger.error(f"Error: {e}")
         return None, e
-
-if __name__ == '__main__':
-    app.run(debug=True)

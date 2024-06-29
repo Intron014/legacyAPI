@@ -1,0 +1,10 @@
+version: "3"
+services:
+  api:
+    build:
+      context: api
+    command: gunicorn app.main:app --bind 0.0.0.0:5009 --reload
+    volumes:
+      - ./api/app:/app
+    ports:
+      - "5009:5009"
