@@ -1,14 +1,18 @@
+import logging
+import os
+
 from flask import jsonify, request, current_app
 from . import bicimad_bp
 from Crypto.Cipher import DES
 import binascii
 import base64
-
-encodedAccessKey = "OGZmNTI3ZjktZjg1Yi00NWVmLWIxYjItYmQ5ZWI1OWUwZmZm"
-encodedBikeKey = "QklLRTIwMTk="
+log = logging.getLogger(__name__)
+encodedAccessKey = os.environ.get('ENCODED_ACCESS_KEY')
+encodedBikeKey = os.environ.get('ENCODED_BIKE_KEY')
 
 @bicimad_bp.route('/emt-bicimad', methods=['GET'])
 def get_emt_bicimad():
+    log.info('Received a request :: %s', request)
     jsonArray = [
         {
             'data': [
@@ -24,6 +28,7 @@ def get_emt_bicimad():
 
 @bicimad_bp.route('/emt-bicimad-rel', methods=['GET'])
 def get_emt_bicimad_rel():
+    log.info('Received a request :: %s', request)
     jsonArray = [
         {
             'data': [
@@ -38,6 +43,7 @@ def get_emt_bicimad_rel():
 
 @bicimad_bp.route('/emt-bus', methods=['GET'])
 def get_emt_bus():
+    log.info('Received a request :: %s', request)
     jsonArray = [
         {
             'data': [
@@ -68,14 +74,14 @@ def process_bike_data():
         current_app.logger.error(f"Error: {cipher_error}")
         return "", 500
 
-    current_app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
-    current_app.logger.info(f"- d1: {data['D1']}")
-    current_app.logger.info(f"- d2: {data['D2']}")
-    current_app.logger.info(f"- bikeNumber: {data['BikeNumber']}")
-    current_app.logger.info(f"- docker: {data['Docker']}")
-    current_app.logger.info(f"- firstCipherStr: {first_cipher_str}")
-    current_app.logger.info(f"- secondCipherStr: {second_cipher_str}")
-    current_app.logger.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    log.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
+    log.info(f"- d1: {data['D1']}")
+    log.info(f"- d2: {data['D2']}")
+    log.info(f"- bikeNumber: {data['BikeNumber']}")
+    log.info(f"- docker: {data['Docker']}")
+    log.info(f"- firstCipherStr: {first_cipher_str}")
+    log.info(f"- secondCipherStr: {second_cipher_str}")
+    log.info(f"{'-' * (len(second_cipher_str + '- secondCipherStr: '))}")
     return hash_code.decode(), 200
 
 def decode_keys():
