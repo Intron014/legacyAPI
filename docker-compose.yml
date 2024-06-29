@@ -1,3 +1,4 @@
+name: the-i014-api
 services:
   api:
     build:
