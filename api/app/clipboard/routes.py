@@ -4,11 +4,6 @@ from . import clipboard_bp
 
 log = logging.getLogger(__name__)
 
-@clipboard_bp.route('/')
-def root():
-    log.info('Received a request :: %s', request)
-    return redirect("https://intron014.com/404api", code=302)
-
 @clipboard_bp.route('/modify-clipboard-link', methods=['POST'])
 def modify_clipboard_link():
     log.info('Received a request :: %s', request)

@@ -1,5 +1,5 @@
 import logging
-from flask import Flask
+from flask import Flask, redirect
 from app.bicimad.routes import bicimad_bp
 from app.clipboard.routes import clipboard_bp
 from app.lastfm.routes import lastfm_bp
@@ -17,3 +17,9 @@ app.register_blueprint(bicimad_bp)
 app.register_blueprint(clipboard_bp)
 app.register_blueprint(lastfm_bp)
 
+@app.route('/<path:path>')
+def catch_all(path):
+    return redirect("https://intron014.com/404api", code=302)
+@app.route('/')
+def root():
+    return redirect("https://intron014.com/404api", code=302)
