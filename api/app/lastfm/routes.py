@@ -1,4 +1,3 @@
-from flask import jsonify, request, Blueprint, redirect
 
 from . import lastfm_bp
 
@@ -30,10 +29,15 @@ def latest_song(user):
         lastfm_response = req.json()
         try:
             track = lastfm_response['recenttracks']['track'][0]
+
         except IndexError:
             return jsonify({
                 'message': 'NO_TRACKS_FOUND'
             }), 200
+        try:
+            isplaying = track['@attr']['nowplaying']
+        except KeyError:
+            isplaying = 'false'
         if request.args.get('format') == 'shields.io':
             song = track['name']
             artist = track['artist']['#text']
@@ -41,7 +45,7 @@ def latest_song(user):
             message = f"{song} - {artist}" if include_artist else song
             return jsonify({
                 'schemaVersion': 1,
-                'label': 'Last Played',
+                'label': 'Listening to' if isplaying == 'true' else 'Last Played',
                 'message': message,
             }), 200
         return jsonify({
