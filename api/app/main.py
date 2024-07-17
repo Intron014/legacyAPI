@@ -12,18 +12,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ledb.db'
 
-
-
 db.init_app(app)
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
-
-
-
-LOG_FORMAT = ("%(levelname) -10s %(asctime)s %(name) "
+LOG_FORMAT = ("%(levelname) -10s %(asctime)s %(name)"
               "-30s %(funcName) -35s %(lineno) -5d: %(message)s")
 logging.basicConfig(level=os.environ.get(
     'LOG_LEVEL', 'INFO'), format=LOG_FORMAT)
@@ -37,6 +32,8 @@ app.register_blueprint(mood_bp)
 @app.route('/<path:path>')
 def catch_all(path):
     return redirect("https://intron014.com/404api", code=302)
+
+
 @app.route('/')
 def root():
     return redirect("https://intron014.com/404api", code=302)
