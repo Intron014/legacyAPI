@@ -3,10 +3,16 @@ services:
   api:
     build:
       context: api
-    command: gunicorn app.main:app --bind 0.0.0.0:5009 --reload
+    command: >
+      sh -c "flask -A app.main:app db init && flask -A app.main:app db upgrade &&
+             gunicorn app.main:app --bind 0.0.0.0:5009 --reload"
     volumes:
       - ./api/app:/app
+      - ./api/instance:/instance
+      - ./api/migrations:/migrations
     ports:
       - "5009:5009"
     env_file:
       - ./api/.env
+volumes:
+    database:
