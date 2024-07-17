@@ -4,8 +4,7 @@ services:
     build:
       context: api
     command: >
-      sh -c "flask -A app.main:app db init && flask -A app.main:app db upgrade &&
-             gunicorn app.main:app --bind 0.0.0.0:5009 --reload"
+      sh -c "gunicorn app.main:app --bind 0.0.0.0:5009 --reload"
     volumes:
       - ./api/app:/app
       - ./api/instance:/instance
@@ -16,3 +15,7 @@ services:
       - ./api/.env
 volumes:
     database:
+
+# command: >
+#      sh -c "flask -A app.main:app db init && flask -A app.main:app db upgrade &&
+#             gunicorn app.main:app --bind 0.0.0.0:5009 --reload"
