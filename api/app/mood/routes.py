@@ -5,10 +5,10 @@ import logging
 from flask import Blueprint, jsonify, request
 import os
 
+AUTH_PASSWORD = os.environ.get('AUTH_PASSWORD')
 log = logging.getLogger(__name__)
 @mood_bp.route('/mood/fetch-latest', methods=['GET'])
 def fetch_latest():
-    AUTH_PASSWORD = os.environ.get('AUTH_PASSWORD')
     log.info('Received a request :: %s', request)
     if request.headers.get('Authorization') != f'Bearer {AUTH_PASSWORD}':
         return jsonify({
