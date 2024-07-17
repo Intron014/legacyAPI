@@ -4,6 +4,7 @@ from datetime import datetime
 class Moods(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     mood = db.Column(db.String(200), nullable=False)
+    hide = db.Column(db.Boolean, default=False)
 
 class MoodLogger(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
