@@ -5,6 +5,9 @@ services:
       context: api
     command: >
       sh -c "gunicorn app.main:app --bind 0.0.0.0:5009 --reload"
+
+    container_name: superapi
+    restart: unless-stopped
     volumes:
       - ./api/app:/app
       - ./api/instance:/instance
