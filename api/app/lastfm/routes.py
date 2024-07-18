@@ -17,6 +17,7 @@ TIMEOUT = 10
 @lastfm_bp.route('/<user>/latest-song', methods=['GET'])
 def latest_song(user):
     log.info('Received a request :: %s', request)
+    log.info('Requester IP :: %s', request.remote_addr)
     api_key = os.environ.get('LASTFM_API_KEY')
     api_url = f"{BASE_URL}?{RECENT_TRACKS_PARAMS}&user={user}&api_key={api_key}"
     if not api_key:
