@@ -1,5 +1,6 @@
 import logging
 from flask import Flask, redirect, jsonify, request
+from flask_cors import CORS
 from flask_migrate import Migrate
 from app.bicimad.routes import bicimad_bp
 from app.clipboard.routes import clipboard_bp
@@ -9,6 +10,7 @@ from app.database import db
 import os
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ledb.db'
 
