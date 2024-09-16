@@ -38,6 +38,10 @@ def health():
 def serve_cvscript():
     return app.send_static_file('cvscript.js')
 
+@app.route('/webfiles/current-song.js')
+def serve_current_song():
+    return app.send_static_file('current-song.js')
+
 @app.route('/<path:path>')
 def catch_all(path):
     return redirect("https://intron014.com/404api", code=302)
