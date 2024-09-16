@@ -30,6 +30,13 @@ app.register_blueprint(clipboard_bp)
 app.register_blueprint(lastfm_bp)
 app.register_blueprint(mood_bp)
 
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok', 'code': 200})
+
+@app.route('/webfiles/cvscript.js')
+def serve_cvscript():
+    return app.send_static_file('cvscript.js')
 
 @app.route('/<path:path>')
 def catch_all(path):
