@@ -33,8 +33,11 @@ function populateCV(cvData) {
     const projectsList = document.getElementById('projects-list');
     cvData.projects.forEach(project => {
       const li = document.createElement('li');
+      if(project.link) {
+        project.title = `<a href="${project.link}">${project.title}</a>`;
+      }
       li.innerHTML = `
-        <strong><a href="${project.link}">${project.title}</a></strong><br>
+        <strong>${project.title}<br>
         ${convertMarkdownLinks(project.description)}<br>
         <span class="project-tags">${project.tags.join(', ')}</span>
       `;
